@@ -10,7 +10,11 @@ npm install
 ```bash
 npm start
 ```
-3) Make sure to run the server on port 4000
+3) Create a new .env file in the root directory of the project where you downloaded the code. Then, add an environment variable inside that file. For example:
+```Typescript
+PORT=4000
+```
+4) Make sure to run the server on port 4000
 ```bash
 http://localhost:4000
 ```
