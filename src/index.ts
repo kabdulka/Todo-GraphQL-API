@@ -1,7 +1,5 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { todo } from 'node:test';
-// const uuid = require('uuid');
 import { v4 as uuidv4 } from 'uuid';
 
 // A schema is a collection of type definitions (hence "typeDefs")
@@ -33,18 +31,14 @@ const typeDefs = `#graphql
 
 `;
 
-// type Mutation {
-//     createMessage(input: MessageInput): Message
-//     updateMessage(id: ID!, input: MessageInput): Message
-//   }
-
 interface Todo {
     id: string
     task: string
     completed: boolean
 }
 
-const todos: Todo[] = [
+// sample hardcoded data. 
+let todos: Todo[] = [
     {
       id: uuidv4(),
       task: 'Wake up early',
@@ -55,15 +49,22 @@ const todos: Todo[] = [
       task: 'Brush teeth',
       completed: false,
     },
-  ];
+    {
+      id: uuidv4(),
+      task: 'Eat Break fast',
+      completed: false,
+    },
+];
 
 
-  // Resolvers define how to fetch the types defined in your schema.
+// Resolvers define how to fetch the types defined in your schema.
 // This resolver retrieves Todos from the "todos" array above.
 const resolvers = {
     Query: {
       todos: ():Todo[] => todos,
+
       getActiveTodos: () :Todo[] => {
+
         const activeTodos: Todo[] = [];
 
         todos.forEach((todo: Todo) => {
@@ -77,13 +78,21 @@ const resolvers = {
     },
     Mutation: {
         addTodo: (root, args): Todo => {
+
+            const {task, completed} = args
+
+            // make sure args are not empty
+            if (task == undefined || completed == undefined ) {
+                return;
+            }
+
             const newTodo: Todo = {
                 id: uuidv4(),
-                task: args.task,
-                completed: args.completed
+                task: task,
+                completed: completed
             }
             todos.push(newTodo)
-            console.log(newTodo)
+            // console.log(newTodo)
             return newTodo
         },
         // Function will mark a todo item as complete
@@ -102,10 +111,19 @@ const resolvers = {
         },
         deleteTodo: (root, args): Todo => {
             const {id} = args
+            console.log(id)
+
             // todo object to be deleted
-            const targetTodo: Todo = todos.find(todo => todo.id === id)
-   
-            return targetTodo
+            const targetTodo: Todo = todos.find(todo => todo.id === id);
+
+            // make sure todo to be deleted exists
+            if (targetTodo){
+                // "remove target todo from main source of data (todos array)"
+                console.log(targetTodo)
+                const filteredTodos: Todo[] = todos.filter(todo => todo.id !== id);
+                todos = filteredTodos
+            }
+            return targetTodo;
         }
     }// end Mutations
   };

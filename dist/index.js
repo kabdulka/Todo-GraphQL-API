@@ -26,10 +26,11 @@ const typeDefs = `#graphql
   type Mutation {
       addTodo(task: String!, completed: Boolean!): Todo!
       updateTodo(id: String): String
+      deleteTodo(id: String): Todo
   }
 
 `;
-const todos = [
+let todos = [
     {
         id: uuidv4(),
         task: 'Wake up early',
@@ -38,6 +39,11 @@ const todos = [
     {
         id: uuidv4(),
         task: 'Brush teeth',
+        completed: false,
+    },
+    {
+        id: uuidv4(),
+        task: 'Eat Break fast',
         completed: false,
     },
 ];
@@ -58,13 +64,18 @@ const resolvers = {
     },
     Mutation: {
         addTodo: (root, args) => {
+            const { task, completed } = args;
+            // make sure args are not empty
+            if (task == undefined || completed == undefined) {
+                return;
+            }
             const newTodo = {
                 id: uuidv4(),
-                task: args.task,
-                completed: args.completed
+                task: task,
+                completed: completed
             };
             todos.push(newTodo);
-            console.log(newTodo);
+            // console.log(newTodo)
             return newTodo;
         },
         // Function will mark a todo item as complete
@@ -78,6 +89,20 @@ const resolvers = {
                 }
             });
             return success;
+        },
+        deleteTodo: (root, args) => {
+            const { id } = args;
+            console.log(id);
+            // todo object to be deleted
+            const targetTodo = todos.find(todo => todo.id === id);
+            // make sure todo to be deleted exists
+            if (targetTodo) {
+                // "remove target todo from main source of data (todos arr)"
+                console.log(targetTodo);
+                const filteredTodos = todos.filter(todo => todo.id === id);
+                todos = filteredTodos;
+            }
+            return targetTodo;
         }
     } // end Mutations
 };
