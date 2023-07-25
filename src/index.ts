@@ -11,7 +11,6 @@ const port = parseInt((process.env.PORT));
 
 /*
 --- comment for self-study ---
-
 A schema is a collection of type definitions (hence "typeDefs")
 that together define the "shape" of queries that are executed against
 your data.
@@ -51,23 +50,28 @@ interface Todo {
 
 // sample hardcoded data. 
 // MongoDb, MySQL or JSON file could be used for future iterations
-// to allow for more persistent data
+// to make data more persistent
 let todos: Todo[] = [
     {
-      id: uuidv4(),
-      task: 'Wake up early',
-      completed: false,
+        id: uuidv4(),
+        task: 'Wake up early',
+        completed: false,
     },
     {
-      id: uuidv4(),
-      task: 'Brush teeth',
-      completed: false,
+        id: uuidv4(),
+        task: 'Brush teeth',
+        completed: false,
     },
     {
-      id: uuidv4(),
-      task: 'Eat Break fast',
-      completed: false,
+        id: uuidv4(),
+        task: 'Eat Break fast',
+        completed: false,
     },
+    {
+        id: uuidv4(),
+        task: 'Go to Gym',
+        completed: false,
+      },
 ];
 
 /* 
@@ -77,22 +81,26 @@ let todos: Todo[] = [
 */
 const resolvers = {
     Query: {
-      todos: ():Todo[] => todos,
 
-      getActiveTodos: () :Todo[] => {
+        // get ALL todos
+        todos: ():Todo[] => todos,
 
-        const activeTodos: Todo[] = [];
+        // get ONLY active todos
+        getActiveTodos: () :Todo[] => {
 
-        todos.forEach((todo: Todo) => {
-            if (todo.completed === true) {
-                activeTodos.push(todo)
-            }
-        })
+            const activeTodos: Todo[] = [];
 
-        return activeTodos
-      },
+            todos.forEach((todo: Todo) => {
+                if (todo.completed === true) {
+                    activeTodos.push(todo)
+                }
+            })
+
+            return activeTodos
+        },
     },
     Mutation: {
+        // Create/Post new todo
         addTodo: (root, args): Todo => {
 
             const {task, completed} = args
@@ -111,7 +119,7 @@ const resolvers = {
 
             return newTodo
         },
-        // Function will mark a todo item as complete
+        // Update target Todo with matching id as complete
         updateTodo: (root, args): string => {
 
             const {id} = args;
@@ -127,6 +135,7 @@ const resolvers = {
             
             return successMsg;
         },
+        // Delete single todo with matching ID
         deleteTodo: (root, args): Todo => {
             const {id} = args
 
