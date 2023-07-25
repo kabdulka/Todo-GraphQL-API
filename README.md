@@ -21,3 +21,7 @@ http://localhost:4000
 
 ## Tech Stack
 Typescript, Node, GraphQl, Apollo Server
+
+## Testing
+#### You can test the API using Postman or Apollo Sandbox. The following image depicts a query that retrieves all todos
+<img width="1119" alt="Screenshot 2023-07-25 at 4 03 35 PM" src="https://github.com/kabdulka/Todo-GraphQL-API/assets/15660934/06ec6e03-1fad-47e7-9117-76d00c461414">
