@@ -1,7 +1,7 @@
 # Todo-GraphQL-API
 
-To install ths project, run npm install
+To install ths project, run npm install on your terminal
 
 To run the server, type the command npm start
 
-Make sure to run the server on port 4000
+Make sure that the server is running on port 4000
