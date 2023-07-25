@@ -19,7 +19,7 @@ PORT=4000
 http://localhost:4000
 ```
 
-## Tech Stack
+## Technologies
 Typescript, Node, GraphQl, Apollo Server
 
 ## Testing
