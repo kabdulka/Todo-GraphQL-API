@@ -8,7 +8,6 @@ dotenv.config();
 const port = parseInt((process.env.PORT));
 /*
 --- comment for self-study ---
-
 A schema is a collection of type definitions (hence "typeDefs")
 that together define the "shape" of queries that are executed against
 your data.
@@ -41,7 +40,7 @@ const typeDefs = `#graphql
 `;
 // sample hardcoded data. 
 // MongoDb, MySQL or JSON file could be used for future iterations
-// to allow for more persistent data
+// to make data more persistent
 let todos = [
     {
         id: uuidv4(),
@@ -58,6 +57,11 @@ let todos = [
         task: 'Eat Break fast',
         completed: false,
     },
+    {
+        id: uuidv4(),
+        task: 'Go to Gym',
+        completed: false,
+    },
 ];
 /*
 --- comment for self-study ---
@@ -66,7 +70,9 @@ let todos = [
 */
 const resolvers = {
     Query: {
+        // get ALL todos
         todos: () => todos,
+        // get ONLY active todos
         getActiveTodos: () => {
             const activeTodos = [];
             todos.forEach((todo) => {
@@ -78,6 +84,7 @@ const resolvers = {
         },
     },
     Mutation: {
+        // Create/Post new todo
         addTodo: (root, args) => {
             const { task, completed } = args;
             // make sure args are not empty
@@ -92,7 +99,7 @@ const resolvers = {
             todos.push(newTodo);
             return newTodo;
         },
-        // Function will mark a todo item as complete
+        // Update target Todo with matching id as complete
         updateTodo: (root, args) => {
             const { id } = args;
             let successMsg = "Unable to find Item";
@@ -105,6 +112,7 @@ const resolvers = {
             });
             return successMsg;
         },
+        // Delete single todo with matching ID
         deleteTodo: (root, args) => {
             const { id } = args;
             // todo object to be deleted
