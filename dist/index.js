@@ -1,10 +1,19 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-// const uuid = require('uuid');
 import { v4 as uuidv4 } from 'uuid';
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
+import * as dotenv from 'dotenv';
+dotenv.config();
+// parse env variable to int
+// port property inside the listen object must be of type number
+const port = parseInt((process.env.PORT));
+/*
+--- comment for self-study ---
+
+A schema is a collection of type definitions (hence "typeDefs")
+that together define the "shape" of queries that are executed against
+your data.
+
+*/
 const typeDefs = `#graphql
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
 
@@ -30,6 +39,9 @@ const typeDefs = `#graphql
   }
 
 `;
+// sample hardcoded data. 
+// MongoDb, MySQL or JSON file could be used for future iterations
+// to allow for more persistent data
 let todos = [
     {
         id: uuidv4(),
@@ -47,8 +59,11 @@ let todos = [
         completed: false,
     },
 ];
-// Resolvers define how to fetch the types defined in your schema.
-// This resolver retrieves Todos from the "todos" array above.
+/*
+--- comment for self-study ---
+ Resolvers define how to fetch the types defined in your schema.
+ This resolver retrieves Todos from the "todos" array above.
+*/
 const resolvers = {
     Query: {
         todos: () => todos,
@@ -75,48 +90,54 @@ const resolvers = {
                 completed: completed
             };
             todos.push(newTodo);
-            // console.log(newTodo)
             return newTodo;
         },
         // Function will mark a todo item as complete
         updateTodo: (root, args) => {
-            let success = "Unable to find Item";
+            const { id } = args;
+            let successMsg = "Unable to find Item";
             todos.forEach((todo, index) => {
-                if (todo.id === args.id) {
+                if (todo.id === id) {
                     todo.completed = true;
-                    success = "Successfully marked item as completed";
+                    successMsg = "Successfully marked item as completed";
                     return;
                 }
             });
-            return success;
+            return successMsg;
         },
         deleteTodo: (root, args) => {
             const { id } = args;
-            console.log(id);
             // todo object to be deleted
             const targetTodo = todos.find(todo => todo.id === id);
             // make sure todo to be deleted exists
             if (targetTodo) {
-                // "remove target todo from main source of data (todos arr)"
-                console.log(targetTodo);
-                const filteredTodos = todos.filter(todo => todo.id === id);
+                // "remove target todo from main source of data (todos array)"
+                const filteredTodos = todos.filter(todo => todo.id !== id);
                 todos = filteredTodos;
             }
             return targetTodo;
         }
     } // end Mutations
 };
-// The ApolloServer constructor requires two parameters: your schema
-// definition and your set of resolvers.
+/*
+--- comment for self-study ---
+The ApolloServer constructor requires two parameters: your schema
+definition and your set of resolvers.
+*/
 const server = new ApolloServer({
     typeDefs,
     resolvers,
 });
-// Passing an ApolloServer instance to the `startStandaloneServer` function:
-//  1. creates an Express app
-//  2. installs your ApolloServer instance as middleware
-//  3. prepares your app to handle incoming requests
+/*
+--- comment for self-study ---
+
+Passing an ApolloServer instance to the `startStandaloneServer` function:
+    1. creates an Express app
+    2. installs your ApolloServer instance as middleware
+    3. prepares your app to handle incoming requests
+
+*/
 const { url } = await startStandaloneServer(server, {
-    listen: { port: 4000 },
+    listen: { port: port },
 });
 console.log(`🚀  Server ready at: ${url}`);
